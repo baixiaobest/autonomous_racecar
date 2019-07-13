@@ -9,6 +9,8 @@ from control.msg import *
 BLACK = pygame.Color('black')
 WHITE = pygame.Color('white')
 
+UPDATE_RATE = 50 # 50 Hz
+
 
 # This is a simple class that will help us print to the screen.
 # It has nothing to do with the joysticks, just outputting the
@@ -86,7 +88,7 @@ if __name__ == '__main__':
 
     rospy.init_node('joystick')
     pub = rospy.Publisher('vehicle_control', command, queue_size=10)
-    rate = rospy.Rate(30)
+    rate = rospy.Rate(UPDATE_RATE)
 
     left_trigger_initialized = False
     right_trigger_initialized = False
@@ -192,8 +194,8 @@ if __name__ == '__main__':
         # Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
 
-        # Limit to 20 frames per second.
-        clock.tick(30)
+        # Limit frame rate.
+        clock.tick(UPDATE_RATE)
 
         rate.sleep()
 
