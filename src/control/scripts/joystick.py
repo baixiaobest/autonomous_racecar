@@ -55,9 +55,12 @@ def get_throttle(joystick, left_trigger_initialized, right_trigger_intialized):
 def get_triggers_pressed(joystick):
     return joystick.get_button(6) == 1, joystick.get_button(7) == 1
 
-''' Get steering value. Range from -100 to 100'''
+''' 
+    Get steering value. Range from -100 to 100. 
+    Postive->left turn, Negative->right turn
+'''
 def get_steering(joystick):
-    return joystick.get_axis(0) * 100
+    return -joystick.get_axis(0) * 100
 
 
 if __name__ == '__main__':
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     textPrint = TextPrint()
 
     rospy.init_node('joystick')
-    pub = rospy.Publisher('manual_control', command, queue_size=10)
+    pub = rospy.Publisher('vehicle_control', command, queue_size=10)
     rate = rospy.Rate(30)
 
     left_trigger_initialized = False
@@ -178,8 +181,9 @@ if __name__ == '__main__':
 
             textPrint.tprint(screen, "Throttle: {}".format(throttle))
             textPrint.tprint(screen, "Steering: {}".format(steering))
-
-
+            
+            pub.publish(throttle, steering)
+            
 
         #
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT

@@ -146,7 +146,9 @@ struct Definition< ::control::command_<ContainerAllocator> >
     return "# Throttle in percentage. Range of -100 to 100.\n\
 # Negative number means braking.\n\
 float64 throttle\n\
-# Steering angle of the vehicle. Range of -100 to 100.\n\
+# Steering angle of the vehicle. \n\
+# Range of -100 to 100.\n\
+# Postive means left turn, negative means right turn.\n\
 float64 steering\n\
 ";
   }
