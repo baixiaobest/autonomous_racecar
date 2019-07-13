@@ -1,0 +1,8 @@
+prefix=/home/pi/autonomous_car/devel
+
+Name: control
+Description: Description of control
+Version: 0.0.0
+Cflags: -I/home/pi/autonomous_car/devel/include
+Libs: -L/home/pi/autonomous_car/devel/lib 
+Requires: message_runtime
