@@ -1,0 +1,4 @@
+<launch>
+  <node name="joystick" pkg="control" type="joystick.py" />
+  <node name="vehicle_control" pkg="control" type="vehicle_control.py" />
+</launch>

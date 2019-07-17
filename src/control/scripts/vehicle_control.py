@@ -3,6 +3,7 @@
 import rospy
 from control.msg import *
 import RPi.GPIO as GPIO
+import time
 
 SERVO_PIN = 18
 SERVO_FREQUENCY = 100
@@ -18,7 +19,7 @@ THROTTLE_PIN = 13
 THROTTLE_FREQUENCY = 100
 # 1ms of pulse range
 ESC_NEUTRAL = 13.0
-ESC_ACCEL_RANGE = 3 # Max 7
+ESC_ACCEL_RANGE = 2 # Max 7
 ESC_BRAKE_RANGE = 3 # Max 3
 ESC_RANGE = ESC_ACCEL_RANGE + ESC_BRAKE_RANGE
 
@@ -31,6 +32,12 @@ servo = None
 
 # Object that controls the throttle.
 throttle = None
+
+last_cmd_rcv_time = 0
+
+# Expected command message frequency in Hz, 
+# if lower than this, previous command will be invalidated.
+COMMAND_FREQUENCY = 1.0
 
 def setup_GPIO():
     global servo, throttle
@@ -61,7 +68,7 @@ def command_received(cmd):
 
     servo.ChangeDutyCycle(map_steering_to_servo(cmd.steering))
     throttle.ChangeDutyCycle(map_throttle_to_pwm(cmd.throttle))
-
+    last_cmd_rcv_time = time.time()
 
 if __name__ == '__main__':
     setup_GPIO()
@@ -70,5 +77,15 @@ if __name__ == '__main__':
     
     rospy.Subscriber('vehicle_control', command, command_received)
 
-    rospy.spin()
+    rate = rospy.Rate(COMMAND_FREQUENCY)
+    command_interval = 1.0 / COMMAND_FREQUENCY
+
+    while not rospy.is_shutdown():
+        # Neutral all controls if no new command is received
+        # within command_interval.
+        if time.time() - last_cmd_rcv_time >= command_interval:
+            servo.ChangeDutyCycle(SERVO_NEUTRAL)
+            throttle.ChangeDutyCycle(ESC_NEUTRAL)
+
+        rate.sleep()
     
