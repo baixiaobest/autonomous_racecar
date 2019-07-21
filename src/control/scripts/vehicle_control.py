@@ -10,7 +10,7 @@ SERVO_FREQUENCY = 100
 # 1.2ms of pulse range
 SERVO_RANGE = 12.0
 # 1.5ms neutral servo position
-SERVO_NEUTRAL = 13.0
+SERVO_NEUTRAL = 13.2
 
 # Steering range of ros message.
 STEERING_RANGE = 200.0
@@ -19,7 +19,7 @@ THROTTLE_PIN = 13
 THROTTLE_FREQUENCY = 100
 # 1ms of pulse range
 ESC_NEUTRAL = 13.0
-ESC_ACCEL_RANGE = 2 # Max 7
+ESC_ACCEL_RANGE = 7 # Max 7
 ESC_BRAKE_RANGE = 3 # Max 3
 ESC_RANGE = ESC_ACCEL_RANGE + ESC_BRAKE_RANGE
 

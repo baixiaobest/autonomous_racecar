@@ -17,6 +17,8 @@ THROTTLE = 'ABS_RY'
 COMMAND_RANGE = 100.0
 UPDATE_RATE = 50.0 # 50 Hz
 
+POWER_SCALE=0.4 # Percentage of the power that we want to output.
+
 ecodes_dict = {
     304: 'SQUARE',
     305: 'CROSS',
@@ -51,7 +53,7 @@ class joystick_input:
         self.steering = val
 
     def get_command(self):
-        throttle_cmd = (self.throttle - self.brake) / ABS_INPUT_RANGE * COMMAND_RANGE
+        throttle_cmd = (self.throttle - self.brake) / ABS_INPUT_RANGE * COMMAND_RANGE * POWER_SCALE
         steering_cmd = (self.steering - 0.5 * ABS_INPUT_RANGE) / ABS_INPUT_RANGE * COMMAND_RANGE * 2.0 + self.steering_offset
         steering_cmd = -min(COMMAND_RANGE, max(-COMMAND_RANGE, steering_cmd))
         return throttle_cmd, steering_cmd
@@ -65,11 +67,11 @@ if __name__=="__main__":
 
     pp = pprint.PrettyPrinter(indent=2)
 
-    devices= [evdev.InputDevice(path) for path in evdev.list_devices()]
     
     target_dev = None
 
     while target_dev is None:
+        devices= [evdev.InputDevice(path) for path in evdev.list_devices()]
         for device in devices:
             if device.name == TARGET_DEVICE_NAME:
                 target_dev = device
