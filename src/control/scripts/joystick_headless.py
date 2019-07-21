@@ -53,7 +53,12 @@ class joystick_input:
         self.steering = val
 
     def get_command(self):
-        throttle_cmd = (self.throttle - self.brake) / ABS_INPUT_RANGE * COMMAND_RANGE * POWER_SCALE
+        throttle_cmd = (self.throttle - self.brake) / ABS_INPUT_RANGE * COMMAND_RANGE
+        # Scale down the accelerator power.
+        throttle_cmd = throttle_cmd * POWER_SCALE \
+            if throttle_cmd > 0 \
+            else throttle_cmd
+
         steering_cmd = (self.steering - 0.5 * ABS_INPUT_RANGE) / ABS_INPUT_RANGE * COMMAND_RANGE * 2.0 + self.steering_offset
         steering_cmd = -min(COMMAND_RANGE, max(-COMMAND_RANGE, steering_cmd))
         return throttle_cmd, steering_cmd
@@ -82,8 +87,11 @@ if __name__=="__main__":
     while not rospy.is_shutdown():
 
         event = target_dev.read_one()
+        
+        new_joystick_event = False
 
         while event is not None:
+            new_joystick_event = True
 
             #if event.type == ecodes.EV_KEY:
                 #data = categorize(event)
@@ -103,8 +111,11 @@ if __name__=="__main__":
             
             event = target_dev.read_one()
 
-        throttle_cmd, steering_cmd = joy_input.get_command()
-        pub.publish(throttle_cmd, steering_cmd)
+        # Only send the command if we have new joystick event.
+        # For safety reason.
+        if new_joystick_event:
+            throttle_cmd, steering_cmd = joy_input.get_command()
+            pub.publish(throttle_cmd, steering_cmd)
 
         rate.sleep()
 

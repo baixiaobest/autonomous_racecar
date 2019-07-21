@@ -26,6 +26,12 @@ ESC_RANGE = ESC_ACCEL_RANGE + ESC_BRAKE_RANGE
 # Throttle range of ros message
 THROTTLE_RANGE = 100
 
+# Expected command message frequency in Hz, 
+# if lower than this, previous command will be invalidated.
+COMMAND_FREQUENCY = 1.0
+
+
+
 
 # Object that controls the servo pwm.
 servo = None
@@ -34,10 +40,6 @@ servo = None
 throttle = None
 
 last_cmd_rcv_time = 0
-
-# Expected command message frequency in Hz, 
-# if lower than this, previous command will be invalidated.
-COMMAND_FREQUENCY = 1.0
 
 def setup_GPIO():
     global servo, throttle
@@ -57,6 +59,7 @@ def map_steering_to_servo(steering):
     return (steering / STEERING_RANGE * SERVO_RANGE) + SERVO_NEUTRAL
 
 def map_throttle_to_pwm(throttle):
+    throttle = min(THROTTLE_RANGE, max(-THROTTLE_RANGE, throttle))
     if throttle > 0:
         return throttle / THROTTLE_RANGE * ESC_ACCEL_RANGE + ESC_NEUTRAL
     else:
