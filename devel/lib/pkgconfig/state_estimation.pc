@@ -1,0 +1,8 @@
+prefix=/home/pi/autonomous_car/devel
+
+Name: state_estimation
+Description: Description of state_estimation
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pi/autonomous_car/devel/lib 
+Requires: message_runtime

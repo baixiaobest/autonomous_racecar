@@ -34,7 +34,7 @@ def setup_GPIO():
     GPIO.setup(PIN_A, GPIO.IN)
     GPIO.setup(PIN_B, GPIO.IN)
 
-    GPIO.add_event_detect(PIN_A, GPIO.FALLING, callback=encoder_callback, bouncetime=10)
+    GPIO.add_event_detect(PIN_A, GPIO.FALLING, callback=encoder_callback, bouncetime=1)
     #GPIO.add_event_detect(PIN_B, GPIO.BOTH, callback=pin_B_callback)
 
 def pin_B_callback(pin):
