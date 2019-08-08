@@ -10,6 +10,8 @@ from sensor_msgs.msg import Imu
 CALIBRATION_FILE_PATH = './src/state_estimation/data/calibration.txt'
 
 bno = None
+imu_seq = 0
+imu_frame_id = 'imu'
 
 '''
 Read from imu and return Imu message.
@@ -39,6 +41,12 @@ def read_from_imu():
     imu_msg.orientation.y = y
     imu_msg.orientation.z = z
     imu_msg.orientation_covariance[0] = -1
+
+    # Attach Header
+    self.imu_msg.header.stamp = rospy.Time.now()
+    self.seq = imu_seq
+    self.frame_id = imu_frame_id
+    imu_seq += 1
 
     return imu_msg
 
